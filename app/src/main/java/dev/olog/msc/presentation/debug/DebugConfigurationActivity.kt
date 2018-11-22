@@ -10,11 +10,6 @@ import kotlinx.android.synthetic.main.activity_debug_configuration.*
 
 class DebugConfigurationActivity: AppCompatActivity() {
 
-//    companion object {
-//        var clipStart = 0L
-//        var clipEnd = 0L
-//    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_debug_configuration)
@@ -28,9 +23,6 @@ class DebugConfigurationActivity: AppCompatActivity() {
         screenWidth.append(configuration.screenWidthDp.toString())
         smallestWidth.append(configuration.smallestScreenWidthDp.toString())
         activateFakeData.isChecked = AppConstants.useFakeData
-
-//        seekBarClipStart.progress = clipStart.toInt()
-//        seekBarClipEnd.progress = clipEnd.toInt()
     }
 
     override fun onResume() {
@@ -43,30 +35,11 @@ class DebugConfigurationActivity: AppCompatActivity() {
             contentResolver.notifyChange(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, null)
             contentResolver.notifyChange(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI, null)
         }
-
-//        seekBarClipStart.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-//            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
-//            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-//
-//            override fun onStopTrackingTouch(seekBar: SeekBar) {
-//                clipStart = seekBar.progress.toLong()
-//            }
-//        })
-//        seekBarClipEnd.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-//            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
-//            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-//
-//            override fun onStopTrackingTouch(seekBar: SeekBar) {
-//                clipEnd = seekBar.progress.toLong()
-//            }
-//        })
     }
 
     override fun onPause() {
         super.onPause()
         activateFakeData.setOnClickListener(null)
-//        seekBarClipStart.setOnSeekBarChangeListener(null)
-//        seekBarClipEnd.setOnSeekBarChangeListener(null)
     }
 
 }
