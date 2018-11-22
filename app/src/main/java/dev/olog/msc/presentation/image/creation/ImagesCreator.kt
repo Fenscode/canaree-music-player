@@ -1,10 +1,9 @@
 package dev.olog.msc.presentation.image.creation
 
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import dev.olog.msc.app.app
-import dev.olog.msc.dagger.qualifier.ProcessLifecycle
 import dev.olog.msc.domain.gateway.prefs.AppPreferencesGateway
 import dev.olog.msc.domain.interactor.all.newrequest.GetAllFoldersNewRequestUseCase
 import dev.olog.msc.domain.interactor.all.newrequest.GetAllGenresNewRequestUseCase
@@ -20,7 +19,6 @@ import javax.inject.Singleton
 
 @Singleton
 class ImagesCreator @Inject constructor(
-        @ProcessLifecycle lifecycle: Lifecycle,
         private val getAllFoldersUseCase: GetAllFoldersNewRequestUseCase,
         private val getAllPlaylistsUseCase: GetAllPlaylistsNewRequestUseCase,
         private val getAllGenresUseCase: GetAllGenresNewRequestUseCase,
@@ -35,7 +33,7 @@ class ImagesCreator @Inject constructor(
     private val subscriptions = CompositeDisposable()
 
     init {
-        lifecycle.addObserver(this)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
     }
 
     override fun onStart(owner: LifecycleOwner) {

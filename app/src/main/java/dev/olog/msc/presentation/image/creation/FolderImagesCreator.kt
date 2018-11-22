@@ -16,19 +16,18 @@ private val MEDIA_STORE_URI = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
 class FolderImagesCreator @Inject constructor(
         @ApplicationContext private val ctx: Context,
-        private val getAllSongsUseCase: GetAllSongsNewRequestUseCase,
-        private val imagesThreadPool: ImagesThreadPool
+        private val getAllSongsUseCase: GetAllSongsNewRequestUseCase
 
 ) {
 
     fun execute() : Flowable<*> {
         return getAllSongsUseCase.execute()
                 .firstOrError()
-                .observeOn(imagesThreadPool.scheduler)
+                .observeOn(ImagesThreadPool.scheduler)
                 .map { it.groupBy { it.folderPath } }
                 .flattenAsFlowable { it.entries }
                 .parallel()
-                .runOn(imagesThreadPool.scheduler)
+                .runOn(ImagesThreadPool.scheduler)
                 .map { entry -> try {
                     makeImage(entry)
                 } catch (ex: Exception){ false }

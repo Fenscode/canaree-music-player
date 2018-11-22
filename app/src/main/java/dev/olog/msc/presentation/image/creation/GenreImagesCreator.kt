@@ -14,17 +14,16 @@ import javax.inject.Inject
 private val MEDIA_STORE_URI = MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI
 
 class GenreImagesCreator @Inject constructor(
-        @ApplicationContext private val ctx: Context,
-        private val imagesThreadPool: ImagesThreadPool
+        @ApplicationContext private val ctx: Context
 
 ) {
 
 
     fun execute(genres: List<Genre>) : Flowable<*> {
         return Flowable.fromIterable(genres)
-                .observeOn(imagesThreadPool.scheduler)
+                .observeOn(ImagesThreadPool.scheduler)
                 .parallel()
-                .runOn(imagesThreadPool.scheduler)
+                .runOn(ImagesThreadPool.scheduler)
                 .map {
                     val uri = MediaStore.Audio.Genres.Members.getContentUri("external", it.id)
                     Pair(it, CommonQuery.extractAlbumIdsFromSongs(ctx.contentResolver, uri))
