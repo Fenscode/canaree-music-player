@@ -8,11 +8,11 @@ import androidx.lifecycle.ViewModelProvider
 import dev.olog.msc.R
 import dev.olog.msc.domain.entity.PlaylistType
 import dev.olog.msc.domain.entity.SortType
+import dev.olog.msc.presentation.activityViewModelProvider
 import dev.olog.msc.presentation.base.BaseFragment
 import dev.olog.msc.presentation.base.music.service.MediaProvider
 import dev.olog.msc.presentation.model.DisplayableItem
 import dev.olog.msc.presentation.navigator.Navigator
-import dev.olog.msc.presentation.parentViewModelProvider
 import dev.olog.msc.presentation.utils.lazyFast
 import dev.olog.msc.presentation.widget.fast.scroller.WaveSideBarView
 import dev.olog.msc.utils.MediaIdCategory
@@ -43,7 +43,7 @@ class TabFragment : BaseFragment() {
     private val newAlbumsAdapter by lazyFast { TabHorizontalAdapters.getNewAlbums(this)  }
     private val newArtistsAdapter by lazyFast { TabHorizontalAdapters.getNewArtists(this) }
 
-    private val viewModel by lazyFast { parentViewModelProvider<TabFragmentViewModel>(viewModelFactory) }
+    private val viewModel by lazyFast { activityViewModelProvider<TabFragmentViewModel>(viewModelFactory) }
 
     internal val category by lazyFast {
         val ordinalCategory = arguments!!.getInt(TabFragment.ARGUMENTS_SOURCE)
