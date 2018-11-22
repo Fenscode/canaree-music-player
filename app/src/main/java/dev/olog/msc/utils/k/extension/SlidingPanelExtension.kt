@@ -1,6 +1,8 @@
 package dev.olog.msc.utils.k.extension
 
+import androidx.fragment.app.FragmentActivity
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import dev.olog.msc.R
 
 
 fun SlidingUpPanelLayout?.isCollapsed() = this != null &&
@@ -18,4 +20,8 @@ fun SlidingUpPanelLayout?.expand() {
     if (this != null){
         panelState = SlidingUpPanelLayout.PanelState.EXPANDED
     }
+}
+
+fun FragmentActivity.findSlidingPanel(): SlidingUpPanelLayout? {
+    return this.findViewById(R.id.slidingPanel)
 }
