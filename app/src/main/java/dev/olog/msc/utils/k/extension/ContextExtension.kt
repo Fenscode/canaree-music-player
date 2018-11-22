@@ -64,7 +64,3 @@ fun Context.vibrate(time: Long){
         vibrator.vibrate(time)
     }
 }
-
-fun Context.isOneHanded(): Boolean {
-    return isPortrait && configuration.smallestScreenWidthDp < 600
-}

@@ -19,6 +19,7 @@ import dev.olog.msc.constants.PlaylistConstants
 import dev.olog.msc.presentation.base.BaseFragment
 import dev.olog.msc.presentation.base.adapter.drag.TouchHelperAdapterCallback
 import dev.olog.msc.presentation.base.music.service.MediaProvider
+import dev.olog.msc.presentation.main.MainActivity
 import dev.olog.msc.presentation.model.DisplayableItem
 import dev.olog.msc.presentation.navigator.Navigator
 import dev.olog.msc.presentation.theme.AppTheme
@@ -243,7 +244,7 @@ class PlayerFragment : BaseFragment(), SlidingUpPanelLayout.PanelSlideListener {
 
     override fun onResume() {
         super.onResume()
-        act.findSlidingPanel()?.setScrollableView(list)
+        (act as MainActivity).getSlidingPanel()?.setScrollableView(list)
         swipeableView?.setOnSwipeListener(onSwipeListener)
         shuffle?.setOnClickListener { mediaProvider.toggleShuffleMode() }
         repeat?.setOnClickListener { mediaProvider.toggleRepeatMode() }

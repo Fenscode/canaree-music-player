@@ -13,7 +13,6 @@ import dev.olog.msc.R
 import dev.olog.msc.constants.AppConstants
 import dev.olog.msc.constants.MusicConstants
 import dev.olog.msc.dagger.qualifier.ProcessLifecycle
-import dev.olog.msc.presentation.main.MainActivity
 import dev.olog.msc.presentation.shortcuts.ShortcutsActivity
 import dev.olog.msc.presentation.shortcuts.playlist.chooser.PlaylistChooserActivity
 import dev.olog.msc.utils.isNougat_MR1
@@ -30,7 +29,7 @@ open class AppShortcutsImpl25(
     init {
         shortcutManager.removeAllDynamicShortcuts()
         shortcutManager.addDynamicShortcuts(listOf(
-                playlistChooser(), search(), shuffle(), play()
+                playlistChooser(), shuffle(), play()
         ))
     }
 
@@ -44,14 +43,6 @@ open class AppShortcutsImpl25(
         if (isNougat_MR1()){
             shortcutManager.addDynamicShortcuts(listOf(play()))
         }
-    }
-
-    private fun search(): ShortcutInfo {
-        return ShortcutInfo.Builder(context, AppConstants.SHORTCUT_SEARCH)
-                .setShortLabel(context.getString(R.string.shortcut_search))
-                .setIcon(Icon.createWithResource(context, R.drawable.shortcut_search))
-                .setIntent(createSearchIntent())
-                .build()
     }
 
     private fun play(): ShortcutInfo {
@@ -76,12 +67,6 @@ open class AppShortcutsImpl25(
                 .setIcon(Icon.createWithResource(context, R.drawable.shortcut_playlist_add))
                 .setIntent(createPlaylistChooserIntent())
                 .build()
-    }
-
-    private fun createSearchIntent(): Intent {
-        val intent = Intent(context, MainActivity::class.java)
-        intent.action = AppConstants.SHORTCUT_SEARCH
-        return intent
     }
 
     private fun createPlayIntent(): Intent {

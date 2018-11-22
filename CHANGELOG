@@ -2,6 +2,8 @@
 - removed disabling day night from base activity
 - removed unused dagger injection in splash
 - fixed dark theme in library categories
+- removed search app shortcut
+- moving to single activity (removed splash activity)
 
 2.0.11
 - removed unused code

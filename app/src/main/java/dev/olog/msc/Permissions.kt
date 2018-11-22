@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.provider.MediaStore
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import dev.olog.msc.presentation.utils.lazyFast
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
@@ -43,6 +44,10 @@ object Permissions {
         requestPermissions(activity, READ_STORAGE, READ_CODE)
     }
 
+    fun requestReadStorage(fragment: Fragment){
+        requestPermissions(fragment, READ_STORAGE, READ_CODE)
+    }
+
     fun hasUserDisabledReadStorage(activity: Activity): Boolean {
         return hasUserDisabledPermission(activity, READ_STORAGE)
     }
@@ -53,6 +58,10 @@ object Permissions {
 
     private fun requestPermissions(activity: Activity, permission: String, requestCode: Int){
         ActivityCompat.requestPermissions(activity, arrayOf(permission), requestCode)
+    }
+
+    private fun requestPermissions(fragment: Fragment, permission: String, requestCode: Int){
+        fragment.requestPermissions(arrayOf(permission), requestCode)
     }
 
     private fun hasUserDisabledPermission(activity: Activity, permission: String): Boolean{

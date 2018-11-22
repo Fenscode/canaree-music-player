@@ -3,6 +3,7 @@
 package dev.olog.msc.utils.k.extension
 
 import android.content.Context
+import androidx.annotation.DimenRes
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -17,3 +18,5 @@ inline val Fragment.ctx : Context
 
 inline val Fragment.act : FragmentActivity
     get() = activity!!
+
+fun Fragment.dimen(@DimenRes resource: Int): Int = resources.getDimensionPixelSize(resource)

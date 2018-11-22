@@ -31,7 +31,6 @@ import javax.inject.Singleton
         PreferenceModule::class,
 //
 //        // presentation
-        ActivityBindingsModule::class,
         WidgetBindingModule::class,
         MainActivityInjector::class,
         AboutActivityInjector::class,

@@ -8,7 +8,8 @@ import dev.olog.msc.utils.MediaIdCategory
 
 interface Navigator {
 
-    fun toFirstAccess(requestCode: Int)
+    fun toFirstAccess()
+    fun toMain()
 
     fun toLibraryCategories(forceRecreate: Boolean)
     fun toPodcastCategories(forceRecreate: Boolean)

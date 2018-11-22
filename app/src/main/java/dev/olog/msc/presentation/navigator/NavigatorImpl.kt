@@ -1,6 +1,5 @@
 package dev.olog.msc.presentation.navigator
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.view.View
@@ -30,6 +29,7 @@ import dev.olog.msc.presentation.edit.track.EditTrackFragment
 import dev.olog.msc.presentation.library.categories.podcast.CategoriesPodcastFragment
 import dev.olog.msc.presentation.library.categories.track.CategoriesFragment
 import dev.olog.msc.presentation.main.MainActivity
+import dev.olog.msc.presentation.main.MainActivityFragment
 import dev.olog.msc.presentation.model.DisplayableItem
 import dev.olog.msc.presentation.offline.lyrics.OfflineLyricsFragment
 import dev.olog.msc.presentation.playing.queue.PlayingQueueFragment
@@ -71,9 +71,16 @@ class NavigatorImpl @Inject internal constructor(
         popupDisposable.unsubscribe()
     }
 
-    override fun toFirstAccess(requestCode: Int) {
-        val intent = Intent(activity, SplashActivity::class.java)
-        activity.startActivityForResult(intent, requestCode)
+    override fun toFirstAccess() {
+        activity.fragmentTransaction {
+            replace(R.id.root_container, SplashActivity(), SplashActivity.TAG)
+        }
+    }
+
+    override fun toMain() {
+        activity.fragmentTransaction {
+            replace(R.id.root_container, MainActivityFragment(), MainActivityFragment.TAG)
+        }
     }
 
     private fun anyFragmentOnUpperFragmentContainer(): Boolean {

@@ -7,7 +7,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import dev.olog.msc.presentation.detail.DetailFragment
 import dev.olog.msc.presentation.theme.AppTheme
 import dev.olog.msc.utils.isMarshmallow
-import dev.olog.msc.utils.k.extension.findSlidingPanel
 import dev.olog.msc.utils.k.extension.isPortrait
 import dev.olog.msc.utils.k.extension.removeLightStatusBar
 import dev.olog.msc.utils.k.extension.setLightStatusBar
@@ -51,7 +50,7 @@ class StatusBarColorBehavior @Inject constructor(
         if (fragment == null){
             activity.window.setLightStatusBar()
         } else {
-            if (activity.findSlidingPanel()?.panelState == SlidingUpPanelLayout.PanelState.EXPANDED){
+            if (activity.getSlidingPanel()?.panelState == SlidingUpPanelLayout.PanelState.EXPANDED){
                 activity.window.setLightStatusBar()
             } else {
                 fragment.adjustStatusBarColor()
