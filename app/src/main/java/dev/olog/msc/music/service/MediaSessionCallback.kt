@@ -181,7 +181,6 @@ class MediaSessionCallback @Inject constructor(
                             error?.invoke()
                         }
                     }, Throwable::printStackTrace)
-                    .addTo(subscriptions)
         }
     }
 
