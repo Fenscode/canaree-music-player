@@ -12,6 +12,7 @@ import android.view.KeyEvent
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import com.crashlytics.android.Crashlytics
 import dev.olog.msc.R
 import dev.olog.msc.constants.MusicConstants
 import dev.olog.msc.dagger.qualifier.ApplicationContext
@@ -95,6 +96,17 @@ class MediaSessionCallback @Inject constructor(
         })
     }
 
+    private fun onPlayBlocking(){
+        if (queue.isReady()){
+            player.resume()
+        } else {
+            queue.prepareBlocking()?.let { mediaEntity ->
+                player.prepare(mediaEntity)
+                player.resume()
+            }
+        }
+    }
+
     override fun onPlayFromSearch(query: String, extras: Bundle) {
         queue.handlePlayFromGoogleSearch(query, extras)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -130,6 +142,20 @@ class MediaSessionCallback @Inject constructor(
         onSkipToNext(false)
     }
 
+    fun onSkipToNextBlocking(){
+        try {
+            if (!queue.isReady()){
+                queue.prepareBlocking()?.let { mediaEntity ->
+                    player.prepare(mediaEntity)
+                }
+            }
+            onSkipToNext()
+        } catch (ex: Exception){
+            ex.printStackTrace()
+            Crashlytics.logException(ex)
+        }
+    }
+
     override fun onSkipToPrevious() {
         doWhenReady ({
             updatePodcastPosition()
@@ -137,6 +163,20 @@ class MediaSessionCallback @Inject constructor(
                 player.playNext(metadata, SkipType.SKIP_PREVIOUS)
             }
         }, { context.toast(R.string.popup_error_message) })
+    }
+
+    fun onSkipToPreviousBlocking(){
+        try {
+            if (!queue.isReady()){
+                queue.prepareBlocking()?.let { mediaEntity ->
+                    player.prepare(mediaEntity)
+                }
+            }
+            onSkipToPrevious()
+        } catch (ex: Exception){
+            ex.printStackTrace()
+            Crashlytics.logException(ex)
+        }
     }
 
     private fun onTrackEnded(){
@@ -319,7 +359,7 @@ class MediaSessionCallback @Inject constructor(
         if (player.isPlaying()) {
             player.pause(false)
         } else {
-            onPlay()
+            onPlayBlocking()
         }
     }
 

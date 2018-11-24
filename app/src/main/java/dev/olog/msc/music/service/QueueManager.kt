@@ -12,6 +12,7 @@ import dev.olog.msc.domain.interactor.all.GetSongListByParamUseCase
 import dev.olog.msc.domain.interactor.all.most.played.GetMostPlayedSongsUseCase
 import dev.olog.msc.domain.interactor.all.recently.added.GetRecentlyAddedUseCase
 import dev.olog.msc.domain.interactor.item.GetSongByFileUseCase
+import dev.olog.msc.domain.interactor.playing.queue.GetPlayingQueueBlockingUseCase
 import dev.olog.msc.domain.interactor.playing.queue.GetPlayingQueueUseCase
 import dev.olog.msc.music.service.interfaces.Queue
 import dev.olog.msc.music.service.model.*
@@ -33,6 +34,7 @@ import javax.inject.Inject
 class QueueManager @Inject constructor(
         private val queueImpl: QueueImpl,
         private val getPlayingQueueUseCase: GetPlayingQueueUseCase,
+        private val getPlayingQueueBlockingUseCase: GetPlayingQueueBlockingUseCase,
         private val musicPreferencesUseCase: MusicPreferencesGateway,
         private val shuffleMode: ShuffleMode,
         private val getSongListByParamUseCase: GetSongListByParamUseCase,
@@ -59,6 +61,23 @@ class QueueManager @Inject constructor(
                 .map { (list, position) -> list[position].toPlayerMediaEntity(
                         queueImpl.computePositionInQueue(list, position), getLastSessionBookmark(list[position])) }
                 .doOnSuccess { isReady.compareAndSet(false, true) }
+    }
+
+    override fun prepareBlocking(): PlayerMediaEntity? {
+        try {
+            val queue = getPlayingQueueBlockingUseCase.execute()
+                    .map { it.toMediaEntity() }
+            queueImpl.updatePlayingQueueAndPersist(queue)
+            val (list, position) = lastSessionSong.apply(queue)
+            queueImpl.updateCurrentSongPosition(list, position)
+            val mediaEntity = list[position].toPlayerMediaEntity(
+                    queueImpl.computePositionInQueue(list, position), getLastSessionBookmark(list[position])
+            )
+            isReady.compareAndSet(false, true)
+            return mediaEntity
+        } catch (ex: Exception){
+            return null
+        }
     }
 
     private fun getLastSessionBookmark(mediaEntity: MediaEntity): Long {

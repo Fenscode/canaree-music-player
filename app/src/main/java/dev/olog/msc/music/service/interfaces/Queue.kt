@@ -14,6 +14,7 @@ interface Queue {
     fun getCurrentPositionInQueue(): PositionInQueue
 
     fun prepare(): Single<PlayerMediaEntity>
+    fun prepareBlocking(): PlayerMediaEntity?
 
     fun handleSkipToNext(trackEnded: Boolean): PlayerMediaEntity?
 

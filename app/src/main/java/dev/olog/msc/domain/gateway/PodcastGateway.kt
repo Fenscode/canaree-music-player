@@ -6,6 +6,8 @@ import io.reactivex.Observable
 
 interface PodcastGateway : BaseGateway<Podcast, Long> {
 
+    fun getAllBlocking(): List<Podcast>
+
     fun getAllUnfiltered(): Observable<List<Podcast>>
 
     fun getByAlbumId(albumId: Long): Observable<Podcast>

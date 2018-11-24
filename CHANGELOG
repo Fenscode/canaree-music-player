@@ -4,6 +4,7 @@
 - fixed dark theme in library categories
 - removed search app shortcut
 - moving to single activity (removed splash activity)
+- fixed app widget not working
 
 2.0.11
 - removed unused code

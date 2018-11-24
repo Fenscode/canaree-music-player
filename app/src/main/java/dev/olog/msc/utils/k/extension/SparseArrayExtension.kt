@@ -19,3 +19,11 @@ fun <T> LongSparseArray<T>.toggle(key: Long, item: T){
         this.remove(key)
     }
 }
+
+fun <T> List<T>.toSparseArray(keySelector: ((T) -> Long)): LongSparseArray<T> {
+    val result = LongSparseArray<T>(this.size)
+    for (item in this){
+        result.append(keySelector(item), item)
+    }
+    return result
+}

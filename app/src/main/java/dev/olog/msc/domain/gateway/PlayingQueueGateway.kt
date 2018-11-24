@@ -11,6 +11,7 @@ interface PlayingQueueGateway {
     fun observeAll(): Observable<List<PlayingQueueSong>>
 
     fun getAll(): Single<List<PlayingQueueSong>>
+    fun getAllBlocking(): List<PlayingQueueSong>
 
     fun update(list: List<UpdatePlayingQueueUseCaseRequest>): Completable
 

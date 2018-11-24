@@ -103,11 +103,11 @@ class MusicService : BaseMusicService() {
     }
 
     override fun handleSkipNext(intent: Intent) {
-        callback.onSkipToNext()
+        callback.onSkipToNextBlocking()
     }
 
     override fun handleSkipPrevious(intent: Intent) {
-        callback.onSkipToPrevious()
+        callback.onSkipToPreviousBlocking()
     }
 
     override fun handleSkipToItem(intent: Intent) {

@@ -13,6 +13,7 @@ import android.provider.MediaStore.Audio.Media.DURATION
 import androidx.core.util.getOrDefault
 import com.squareup.sqlbrite3.BriteContentResolver
 import com.squareup.sqlbrite3.SqlBrite
+import dev.olog.msc.Permissions
 import dev.olog.msc.constants.AppConstants
 import dev.olog.msc.dagger.qualifier.ApplicationContext
 import dev.olog.msc.data.mapper.toFakeSong
@@ -140,6 +141,23 @@ class SongRepository @Inject constructor(
             .refCount()
 
     override fun getAll(): Observable<List<Song>> = cachedData
+
+    override fun getAllBlocking(): List<Song> {
+        if (!Permissions.canReadStorage(context)) {
+            return mutableListOf()
+        }
+
+        val result = mutableListOf<Song>()
+
+        context.contentResolver.query(MEDIA_STORE_URI, PROJECTION, SELECTION,
+                null, SORT_ORDER)?.use { cursor ->
+            while (cursor.moveToNext()){
+                result.add(cursor.toSong())
+            }
+        }
+
+        return updateImages(adjustImages(removeBlacklisted(result)))
+    }
 
     override fun getAllNewRequest(): Observable<List<Song>> {
         return queryAllData()

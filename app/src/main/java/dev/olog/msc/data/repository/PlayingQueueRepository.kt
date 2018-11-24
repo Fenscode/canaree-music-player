@@ -34,6 +34,13 @@ class PlayingQueueRepository @Inject constructor(
         ).filter { it.isNotEmpty() }.firstOrError()
     }
 
+    override fun getAllBlocking(): List<PlayingQueueSong> {
+        return playingQueueDao.getAllSongsBlocking(
+                songGateway.getAllBlocking(),
+                podcastGateway.getAllBlocking()
+        )
+    }
+
     override fun observeAll(): Observable<List<PlayingQueueSong>> {
         return playingQueueDao.getAllAsSongs(
                 songGateway.getAll().firstOrError(),

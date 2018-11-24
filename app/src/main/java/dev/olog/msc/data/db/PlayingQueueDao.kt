@@ -12,6 +12,7 @@ import dev.olog.msc.domain.entity.Song
 import dev.olog.msc.domain.interactor.playing.queue.UpdatePlayingQueueUseCaseRequest
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.MediaIdCategory
+import dev.olog.msc.utils.k.extension.toSparseArray
 import io.reactivex.*
 import io.reactivex.rxkotlin.Singles
 import io.reactivex.schedulers.Schedulers
@@ -24,6 +25,12 @@ abstract class PlayingQueueDao {
         ORDER BY progressive
     """)
     internal abstract fun getAllImpl(): Flowable<List<PlayingQueueEntity>>
+
+    @Query("""
+        SELECT * FROM playing_queue
+        ORDER BY progressive
+    """)
+    internal abstract fun getAllBlockingImpl(): List<PlayingQueueEntity>
 
     @Query("DELETE FROM playing_queue")
     internal abstract fun deleteAllImpl()
@@ -82,6 +89,30 @@ abstract class PlayingQueueDao {
 
     @Insert
     internal abstract fun insertMiniQueueImpl(list: List<MiniQueueEntity>)
+
+    fun getAllSongsBlocking(songList: List<Song>, podcastList: List<Podcast>)
+            : List<PlayingQueueSong> {
+        val queue = getAllBlockingImpl()
+        val sparseSongs = songList.toSparseArray { it.id }
+        val sparsePodcasts = podcastList.toSparseArray { it.id }
+        return queue.mapNotNull {  queueItem ->
+            var song : Any? = sparseSongs.get(queueItem.songId)
+            if (song == null){
+                song = sparsePodcasts.get(queueItem.songId)
+            }
+            if (song == null){
+                null
+            } else {
+                if (song is Song){
+                    song.toPlayingQueueSong(queueItem.idInPlaylist, queueItem.category, queueItem.categoryValue)
+                } else if (song is Podcast) {
+                    song.toPlayingQueueSong(queueItem.idInPlaylist, queueItem.category, queueItem.categoryValue)
+                } else {
+                    null
+                }
+            }
+        }
+    }
 
     fun getAllAsSongs(songList: Single<List<Song>>, podcastList: Single<List<Podcast>>)
             : Observable<List<PlayingQueueSong>> {

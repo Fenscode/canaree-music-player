@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import androidx.core.util.getOrDefault
 import com.squareup.sqlbrite3.BriteContentResolver
 import com.squareup.sqlbrite3.SqlBrite
+import dev.olog.msc.Permissions
 import dev.olog.msc.constants.AppConstants
 import dev.olog.msc.dagger.qualifier.ApplicationContext
 import dev.olog.msc.data.db.AppDatabase
@@ -104,6 +105,23 @@ class PodcastRepository @Inject constructor(
             .refCount()
 
     override fun getAll(): Observable<List<Podcast>> = cachedData
+
+    override fun getAllBlocking(): List<Podcast> {
+        if (!Permissions.canReadStorage(context)) {
+            return mutableListOf()
+        }
+
+        val result = mutableListOf<Podcast>()
+
+        context.contentResolver.query(MEDIA_STORE_URI, PROJECTION, SELECTION,
+                null, SORT_ORDER)?.use { cursor ->
+            while (cursor.moveToNext()){
+                result.add(cursor.toPodcast())
+            }
+        }
+
+        return adjustImages(result)
+    }
 
     override fun getAllNewRequest(): Observable<List<Podcast>> {
         return queryAllData()
