@@ -14,6 +14,7 @@ import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.AndroidSupportInjection
 import dev.olog.msc.R
@@ -69,6 +70,16 @@ class PreferencesFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
     private var needsToRecreate = false
 
+    private val snackBarCallback = object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+        override fun onShown(transientBottomBar: Snackbar) {
+            act.findViewById<View>(R.id.wrapper).setPaddingBottom(transientBottomBar.view.height)
+        }
+
+        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+            act.findViewById<View>(R.id.wrapper).setPaddingBottom(0)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -80,10 +91,18 @@ class PreferencesFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
                 .subscribe(viewLifecycleOwner) { isPremium ->
                     forEach(preferenceScreen) { it.isEnabled = isPremium }
 
+                    forceEnable(listOf(
+                            R.string.prefs_library_categories_key, R.string.prefs_show_podcasts_key, R.string.prefs_podcast_library_categories_key,
+                            R.string.prefs_dark_mode_key, R.string.prefs_show_recent_albums_artists_key, R.string.prefs_show_new_albums_artists_key, R.string.prefs_player_controls_visibility_key,
+                            R.string.prefs_detail_sections_key, R.string.prefs_icon_shape_key, R.string.prefs_last_fm_credentials_key, R.string.prefs_auto_create_images_key,
+                            R.string.prefs_auto_download_images_key, R.string.prefs_reset_tutorial_key, R.string.prefs_delete_cached_images_key,
+                            R.string.prefs_ignore_media_store_cover_key, R.string.prefs_lockscreen_artwork_key))
+
                     if (!isPremium) {
                         val v = act.window.decorView.findViewById<View>(android.R.id.content)
                         Snackbar.make(v, R.string.prefs_not_premium, Snackbar.LENGTH_INDEFINITE)
                                 .setAction(R.string.prefs_not_premium_action) { billing.purchasePremium() }
+                                .addCallback(snackBarCallback)
                                 .show()
                     }
                 }
@@ -93,6 +112,13 @@ class PreferencesFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
             autoCreateImages.isChecked = false
             autoCreateImages.isEnabled = false
             autoCreateImages.summaryOff = getString(R.string.prefs_auto_create_images_summary_low_memory)
+        }
+
+    }
+
+    private fun forceEnable(preferences: List<Int>){
+        for (resId in preferences){
+            findPreference(getString(resId)).isEnabled = true
         }
 
     }

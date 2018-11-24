@@ -279,31 +279,18 @@ class AppPreferencesImpl @Inject constructor(
 
     override fun setDefault(): Completable {
         return Completable.create { emitter ->
-            setLibraryCategories(getDefaultLibraryCategories())
-            setPodcastLibraryCategories(getDefaultPodcastLibraryCategories())
+//            library
             setBlackList(setOf())
-            hideQuickAction()
-            setDefaultVisibleSections()
-            hideClassicPlayerControls()
-            setDefaultAutoDownloadImages()
-            setDefaultTheme()
-            setLastFmCredentials(UserCredentials("", ""))
             setDefaultFolderView()
             setDefaultMusicFolder(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC))
+//            user interface
+            setDefaultTheme()
             setDefaultAccentColor()
-            setDefaultLibraryAlbumArtistVisibility()
-            setDefaultPodcastVisibility()
             setDefaultAdaptiveColors()
-            setDefaultLockscreenArtwork()
+            setDefaultImmersiveMode()
+            hideQuickAction()
 
             emitter.onComplete()
-        }
-    }
-
-    private fun setDefaultLockscreenArtwork(){
-        preferences.edit {
-            putBoolean(context.getString(R.string.prefs_lockscreen_artwork_key), false)
-            putBoolean(context.getString(R.string.prefs_ignore_media_store_cover_key), false)
         }
     }
 
@@ -313,16 +300,9 @@ class AppPreferencesImpl @Inject constructor(
         }
     }
 
-    private fun setDefaultLibraryAlbumArtistVisibility(){
+    private fun setDefaultImmersiveMode(){
         preferences.edit {
-            putBoolean(context.getString(R.string.prefs_show_new_albums_artists_key), true)
-            putBoolean(context.getString(R.string.prefs_show_recent_albums_artists_key), true)
-        }
-    }
-
-    private fun setDefaultPodcastVisibility(){
-        preferences.edit {
-            putBoolean(context.getString(R.string.prefs_show_podcasts_key), true)
+            putBoolean(context.getString(R.string.prefs_immersive_key), false)
         }
     }
 
@@ -346,42 +326,18 @@ class AppPreferencesImpl @Inject constructor(
         }
     }
 
-    private fun setDefaultAutoDownloadImages(){
-        preferences.edit {
-            putString(context.getString(R.string.prefs_auto_download_images_key), context.getString(R.string.prefs_auto_download_images_entry_value_wifi))
-            putBoolean(context.getString(R.string.prefs_auto_create_images_key), true)
-        }
-    }
-
     private fun hideQuickAction(){
         preferences.edit {
             putString(context.getString(R.string.prefs_quick_action_key), context.getString(R.string.prefs_quick_action_entry_value_hide))
         }
     }
 
-    private fun setDefaultVisibleSections(){
-        preferences.edit {
-            val default = context.resources.getStringArray(R.array.prefs_detail_sections_entry_values_default).toSet()
-            putStringSet(context.getString(R.string.prefs_detail_sections_key), default)
-        }
-    }
-
-    private fun hideClassicPlayerControls(){
-        preferences.edit {
-            putBoolean(context.getString(R.string.prefs_player_controls_visibility_key), false)
-        }
-    }
-
     private fun setDefaultTheme(){
         preferences.edit {
             putString(context.getString(R.string.prefs_appearance_key), context.getString(R.string.prefs_appearance_entry_value_default))
-            putString(context.getString(R.string.prefs_dark_mode_key), context.getString(R.string.prefs_dark_mode_entry_value_white))
         }
     }
 
-    /*
-            Must be encrypted
-         */
     override fun getLastFmCredentials(): UserCredentials {
         return UserCredentials(
                 preferences.getString(LAST_FM_USERNAME, "")!!,
@@ -389,9 +345,6 @@ class AppPreferencesImpl @Inject constructor(
         )
     }
 
-    /*
-        Must be encrypted
-     */
     override fun observeLastFmCredentials(): Observable<UserCredentials> {
         return rxPreferences.getString(LAST_FM_USERNAME, "")
                 .asObservable()
@@ -401,9 +354,6 @@ class AppPreferencesImpl @Inject constructor(
                 ) }
     }
 
-    /*
-        Must be encrypted
-     */
     override fun setLastFmCredentials(user: UserCredentials) {
         preferences.edit {
             putString(LAST_FM_USERNAME, user.username)
