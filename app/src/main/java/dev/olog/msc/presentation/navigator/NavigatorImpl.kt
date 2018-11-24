@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.appinvite.AppInviteInvitation
-import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import dagger.Lazy
 import dev.olog.msc.R
 import dev.olog.msc.app.app
@@ -42,10 +41,7 @@ import dev.olog.msc.presentation.search.SearchFragment
 import dev.olog.msc.presentation.splash.SplashActivity
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.MediaIdCategory
-import dev.olog.msc.utils.k.extension.collapse
-import dev.olog.msc.utils.k.extension.fragmentTransaction
-import dev.olog.msc.utils.k.extension.hideFragmentsIfExists
-import dev.olog.msc.utils.k.extension.unsubscribe
+import dev.olog.msc.utils.k.extension.*
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
@@ -186,7 +182,7 @@ class NavigatorImpl @Inject internal constructor(
     override fun toDetailFragment(mediaId: MediaId) {
 
         if (allowed()){
-            activity.findViewById<SlidingUpPanelLayout>(R.id.slidingPanel).collapse()
+            activity.findSlidingPanel().collapse()
 
             activity.fragmentTransaction {
                 setReorderingAllowed(true)
