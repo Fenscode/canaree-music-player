@@ -81,6 +81,8 @@ abstract class BaseOfflineLyricsPresenter constructor(
                     }
                     .filter { it.length > 10 }
                     .filter { it[10] != '\r' }
+                    .filter { it[10] != '\n' }
+                    .filter { "${it[10]}" != System.lineSeparator() }
                     .filter { it[0] == '[' && it[9] == ']' }
                     .filter { it[1].isDigit() && it[2].isDigit() && it[4].isDigit() && it[5].isDigit() }
                     .toList()
