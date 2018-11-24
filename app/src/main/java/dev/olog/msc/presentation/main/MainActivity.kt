@@ -26,6 +26,7 @@ import dev.olog.msc.presentation.dialog.rate.request.RateAppDialog
 import dev.olog.msc.presentation.library.categories.track.CategoriesFragment
 import dev.olog.msc.presentation.library.folder.tree.FolderTreeFragment
 import dev.olog.msc.presentation.navigator.Navigator
+import dev.olog.msc.presentation.preferences.PreferencesActivity
 import dev.olog.msc.presentation.utils.animation.HasSafeTransition
 import dev.olog.msc.pro.IBilling
 import dev.olog.msc.utils.MediaId
@@ -100,6 +101,7 @@ class MainActivity : MusicGlueActivity(), HasSlidingPanel, HasBilling {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK){
             when (requestCode){
+                PreferencesActivity.REQUEST_CODE -> recreate()
                 INVITE_FRIEND_CODE -> handleOnFriendsInvited(resultCode, data)
             }
             return
