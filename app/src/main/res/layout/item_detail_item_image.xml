@@ -62,7 +62,7 @@
             android:paddingEnd="@dimen/detail_header_margin_start"
             android:paddingStart="@dimen/detail_header_margin_start"
             android:paddingTop="12dp"
-            android:paddingBottom="12dp"
+
             android:background="@drawable/top_round_corner"
             android:translationY="-15dp">
 
