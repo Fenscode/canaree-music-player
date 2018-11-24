@@ -45,14 +45,14 @@ class BillingImpl @Inject constructor(
     private var setDefaultDisposable: Disposable? = null
 
     private var isTrialState by Delegates.observable(DEFAULT_TRIAL) { _, _, new ->
-        trialPublisher.onNext(false)
+        trialPublisher.onNext(new)
         if (!isPremium()){
             setDefault()
         }
     }
 
     private var isPremiumState by Delegates.observable(DEFAULT_PREMIUM) { _, _, new ->
-        premiumPublisher.onNext(false)
+        premiumPublisher.onNext(new)
         if (!isPremium()){
             setDefault()
         }

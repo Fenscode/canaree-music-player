@@ -71,16 +71,16 @@ ext {
     lottie = '2.8.0'
     sql_brite = '3.2.0'
     billing = '1.2'
-    retrofit = '2.4.0'
+    retrofit = '2.5.0'
     fuzzywuzzy = '1.1.10'
     gson = '2.8.5'
-    ok_http = '3.11.0'
+    ok_http = '3.12.0'
     optional_lib = '1.2'
     last_fm_binding = '0.1.2'
     aes_crypto = '1.1.0'
 
     // reactive
-    rx_java = '2.2.3'
+    rx_java = '2.2.4'
     rx_android = '2.1.0'
     rx_binding = '2.2.0'
 
