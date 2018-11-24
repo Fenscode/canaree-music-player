@@ -59,6 +59,13 @@ class PlayingQueueRepository @Inject constructor(
         )
     }
 
+    override fun getMiniQueueBlocking(): List<PlayingQueueSong> {
+        return playingQueueDao.getMiniQueueBlocking(
+                songGateway.getAllBlocking(),
+                podcastGateway.getAllBlocking()
+        )
+    }
+
     override fun updateMiniQueue(tracksId: List<Pair<Int, Long>>) {
         playingQueueDao.updateMiniQueue(tracksId)
     }

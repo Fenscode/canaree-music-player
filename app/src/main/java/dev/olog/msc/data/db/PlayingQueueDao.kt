@@ -42,6 +42,13 @@ abstract class PlayingQueueDao {
     """)
     internal abstract fun getMiniQueueImpl(): Flowable<List<MiniQueueEntity>>
 
+    @Query("""
+        SELECT *
+        FROM mini_queue
+        ORDER BY timeAdded
+    """)
+    internal abstract fun getMiniQueueBlockingImpl(): List<MiniQueueEntity>
+
     fun observeMiniQueue(songList: Single<List<Song>>, podcastList: Single<List<Podcast>>)
             : Observable<List<PlayingQueueSong>> {
 
@@ -73,6 +80,30 @@ abstract class PlayingQueueDao {
                     result.toList()
 
                 } }
+    }
+
+    fun getMiniQueueBlocking(songList: List<Song>, podcastList: List<Podcast>)
+            : List<PlayingQueueSong> {
+        val queue = getMiniQueueBlockingImpl()
+        val sparseSongs = songList.toSparseArray { it.id }
+        val sparsePodcasts = podcastList.toSparseArray { it.id }
+        return queue.mapNotNull {  queueItem ->
+            var song : Any? = sparseSongs.get(queueItem.id)
+            if (song == null){
+                song = sparsePodcasts.get(queueItem.id)
+            }
+            if (song == null){
+                null
+            } else {
+                if (song is Song){
+                    song.toPlayingQueueSong(queueItem.idInPlaylist, MediaIdCategory.SONGS.toString(), "")
+                } else if (song is Podcast) {
+                    song.toPlayingQueueSong(queueItem.idInPlaylist, MediaIdCategory.SONGS.toString(), "")
+                } else {
+                    null
+                }
+            }
+        }
     }
 
     @Transaction
