@@ -93,8 +93,6 @@
 
         </activity>
 
-        <!--splash activity-->
-        <activity android:name=".presentation.splash.SplashActivity" />
 
         <!--about activity-->
         <activity android:name=".presentation.about.AboutActivity" />

@@ -29,7 +29,7 @@ class SplashTutorialFragment : Fragment(), SwipeableView.SwipeListener {
     private lateinit var nowPlaying: TextView
     private lateinit var coverWrapper: View
     private lateinit var swipeableView : SwipeableView
-    private lateinit var viewPager : StoppingViewPager
+    private var viewPager : StoppingViewPager? = null
 
     private var touchDisposable : Disposable? = null
 
@@ -39,7 +39,7 @@ class SplashTutorialFragment : Fragment(), SwipeableView.SwipeListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         nowPlaying = view.findViewById(R.id.nowPlaying)
-        viewPager = activity!!.findViewById(R.id.viewPager)
+        viewPager = parentFragment?.view?.findViewById(R.id.viewPager)
         cover = view.findViewById(R.id.cover)
         swipeableView = view.findViewById(R.id.swipeableView)
         coverWrapper = view.findViewById(R.id.coverWrapper)
@@ -52,7 +52,7 @@ class SplashTutorialFragment : Fragment(), SwipeableView.SwipeListener {
         super.onResume()
         swipeableView.setOnSwipeListener(this)
         touchDisposable = swipeableView.isTouching()
-                .subscribe({ viewPager.isSwipeEnabled = !it }, Throwable::printStackTrace)
+                .subscribe({ viewPager?.isSwipeEnabled = !it }, Throwable::printStackTrace)
     }
 
     override fun onPause() {

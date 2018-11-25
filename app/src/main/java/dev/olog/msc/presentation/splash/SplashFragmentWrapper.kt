@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.android.synthetic.main.activity_splash.view.*
 import javax.inject.Inject
 
-class SplashActivity : BaseFragment(), View.OnClickListener {
+class SplashFragmentWrapper : BaseFragment(), View.OnClickListener {
 
     companion object {
         const val TAG = "SplashFragmentWrapper"

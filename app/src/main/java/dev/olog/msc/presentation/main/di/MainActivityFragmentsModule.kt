@@ -9,13 +9,13 @@ import dev.olog.msc.presentation.library.categories.track.CategoriesFragment
 import dev.olog.msc.presentation.main.MainActivityFragment
 import dev.olog.msc.presentation.mini.player.MiniPlayerFragment
 import dev.olog.msc.presentation.offline.lyrics.OfflineLyricsFragment
-import dev.olog.msc.presentation.splash.SplashActivity
+import dev.olog.msc.presentation.splash.SplashFragmentWrapper
 
 @Module
 abstract class MainActivityFragmentsModule {
 
     @ContributesAndroidInjector
-    abstract fun provideSplashFragmentWrapper(): SplashActivity
+    abstract fun provideSplashFragmentWrapper(): SplashFragmentWrapper
 
     @ContributesAndroidInjector
     abstract fun provideMainActivityFragment(): MainActivityFragment

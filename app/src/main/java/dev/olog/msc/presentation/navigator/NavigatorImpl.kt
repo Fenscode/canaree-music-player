@@ -38,7 +38,7 @@ import dev.olog.msc.presentation.popup.main.MainPopupDialog
 import dev.olog.msc.presentation.recently.added.RecentlyAddedFragment
 import dev.olog.msc.presentation.related.artists.RelatedArtistFragment
 import dev.olog.msc.presentation.search.SearchFragment
-import dev.olog.msc.presentation.splash.SplashActivity
+import dev.olog.msc.presentation.splash.SplashFragmentWrapper
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.MediaIdCategory
 import dev.olog.msc.utils.k.extension.*
@@ -69,7 +69,7 @@ class NavigatorImpl @Inject internal constructor(
 
     override fun toFirstAccess() {
         activity.fragmentTransaction {
-            replace(R.id.root_container, SplashActivity(), SplashActivity.TAG)
+            replace(R.id.root_container, SplashFragmentWrapper(), SplashFragmentWrapper.TAG)
         }
     }
 

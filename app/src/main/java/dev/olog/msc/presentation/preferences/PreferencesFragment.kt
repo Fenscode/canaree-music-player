@@ -50,6 +50,8 @@ class PreferencesFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
     private lateinit var accentColorChooser: Preference
     private lateinit var resetTutorial: Preference
 
+    private var snackBar: Snackbar? = null
+
     override fun onAttach(context: Context?) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
@@ -100,10 +102,10 @@ class PreferencesFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
 
                     if (!isPremium) {
                         val v = act.window.decorView.findViewById<View>(android.R.id.content)
-                        Snackbar.make(v, R.string.prefs_not_premium, Snackbar.LENGTH_INDEFINITE)
+                        snackBar = Snackbar.make(v, R.string.prefs_not_premium, Snackbar.LENGTH_INDEFINITE)
                                 .setAction(R.string.prefs_not_premium_action) { billing.purchasePremium() }
                                 .addCallback(snackBarCallback)
-                                .show()
+                        snackBar?.show()
                     }
                 }
 
@@ -173,6 +175,8 @@ class PreferencesFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
             showResetTutorialDialog()
             true
         }
+        snackBar?.removeCallback(snackBarCallback)
+        snackBar?.addCallback(snackBarCallback)
     }
 
     override fun onPause() {
@@ -185,6 +189,7 @@ class PreferencesFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         lastFmCredentials.onPreferenceClickListener = null
         accentColorChooser.onPreferenceClickListener = null
         resetTutorial.onPreferenceClickListener = null
+        snackBar?.removeCallback(snackBarCallback)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
