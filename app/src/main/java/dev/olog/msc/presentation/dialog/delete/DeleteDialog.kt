@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import dev.olog.msc.R
 import dev.olog.msc.presentation.base.BaseDialog
+import dev.olog.msc.presentation.utils.lazyFast
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.MediaIdCategory
 import dev.olog.msc.utils.k.extension.asHtml
@@ -29,9 +30,14 @@ class DeleteDialog: BaseDialog() {
         }
     }
 
-    @Inject @JvmField var listSize: Int = 0
-    @Inject lateinit var mediaId: MediaId
-    @Inject lateinit var title: String
+    private val listSize: Int by lazyFast { arguments!!.getInt(DeleteDialog.ARGUMENTS_LIST_SIZE) }
+    private val mediaId: MediaId by lazyFast {
+        val mediaId = arguments!!.getString(DeleteDialog.ARGUMENTS_MEDIA_ID)!!
+        MediaId.fromString(mediaId)
+    }
+    private val title: String by lazyFast {
+        arguments!!.getString(DeleteDialog.ARGUMENTS_ITEM_TITLE)!!
+    }
     @Inject lateinit var presenter: DeleteDialogPresenter
 
     override fun title(context: Context): CharSequence {
@@ -64,7 +70,7 @@ class DeleteDialog: BaseDialog() {
     }
 
     override fun positiveAction(dialogInterface: DialogInterface, which: Int): Completable {
-        return presenter.execute()
+        return presenter.execute(mediaId)
     }
 
     private fun createMessage() : String {

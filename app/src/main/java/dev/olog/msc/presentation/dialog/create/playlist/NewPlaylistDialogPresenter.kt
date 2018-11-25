@@ -14,8 +14,7 @@ import io.reactivex.Completable
 import javax.inject.Inject
 
 class NewPlaylistDialogPresenter @Inject constructor(
-        private val mediaId: MediaId,
-        playlists: GetPlaylistsBlockingUseCase,
+        private val playlistsUseCase: GetPlaylistsBlockingUseCase,
         private val insertCustomTrackListToPlaylist: InsertCustomTrackListToPlaylist,
         private val getSongListByParamUseCase: GetSongListByParamUseCase,
         private val getSongUseCase: GetSongUseCase,
@@ -24,12 +23,21 @@ class NewPlaylistDialogPresenter @Inject constructor(
 
 ) {
 
-    private val playlistType = if (mediaId.isPodcast) PlaylistType.PODCAST else PlaylistType.TRACK
+    private fun getPlaylistType(mediaId: MediaId): PlaylistType {
+        return if (mediaId.isPodcast) PlaylistType.PODCAST else PlaylistType.TRACK
+    }
 
-    private val existingPlaylists = playlists.execute(playlistType)
-            .map { it.title.toLowerCase() }
+    private var existingPlaylists : List<String>? = null
 
-    fun execute(playlistTitle: String) : Completable {
+    private fun getExistingPlaylist(mediaId: MediaId): List<String> {
+        val playlistType = getPlaylistType(mediaId)
+        return playlistsUseCase.execute(playlistType)
+                .map { it.title.toLowerCase() }
+    }
+
+    fun execute(mediaId: MediaId, playlistTitle: String) : Completable {
+        val playlistType = getPlaylistType(mediaId)
+
         if (mediaId.isPlayingQueue){
             return getPlayinghQueueUseCase.execute().mapToList { it.id }
                     .flatMapCompletable {
@@ -55,8 +63,11 @@ class NewPlaylistDialogPresenter @Inject constructor(
         }
     }
 
-    fun isStringValid(string: String): Boolean {
-        return !existingPlaylists.contains(string.toLowerCase())
+    fun isStringValid(mediaId: MediaId, string: String): Boolean {
+        if (existingPlaylists == null){
+            existingPlaylists = getExistingPlaylist(mediaId)
+        }
+        return !existingPlaylists!!.contains(string.toLowerCase())
     }
 
 }

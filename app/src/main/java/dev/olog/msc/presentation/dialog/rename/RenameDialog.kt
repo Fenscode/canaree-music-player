@@ -3,6 +3,7 @@ package dev.olog.msc.presentation.dialog.rename
 import android.content.Context
 import dev.olog.msc.R
 import dev.olog.msc.presentation.base.BaseEditTextDialog
+import dev.olog.msc.presentation.utils.lazyFast
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.k.extension.withArguments
 import io.reactivex.Completable
@@ -24,8 +25,11 @@ class RenameDialog : BaseEditTextDialog() {
     }
 
     @Inject lateinit var presenter: RenameDialogPresenter
-    @Inject lateinit var mediaId: MediaId
-    @Inject lateinit var title: String
+    private val mediaId: MediaId by lazyFast {
+        val mediaId = arguments!!.getString(RenameDialog.ARGUMENTS_MEDIA_ID)!!
+        MediaId.fromString(mediaId)
+    }
+    private val title: String by lazyFast { arguments!!.getString(RenameDialog.ARGUMENTS_ITEM_TITLE) }
 
     override fun title(): Int = R.string.popup_rename
 
@@ -52,7 +56,7 @@ class RenameDialog : BaseEditTextDialog() {
     }
 
     override fun positiveAction(currentValue: String): Completable {
-        return presenter.execute(currentValue)
+        return presenter.execute(mediaId, currentValue)
     }
 
     override fun successMessage(context: Context, currentValue: String): CharSequence {
@@ -66,7 +70,7 @@ class RenameDialog : BaseEditTextDialog() {
         return context.getString(R.string.popup_error_message)
     }
 
-    override fun isStringValid(string: String): Boolean = presenter.checkData(string)
+    override fun isStringValid(string: String): Boolean = presenter.checkData(mediaId, string)
 
     override fun initialTextFieldValue(): String {
         return arguments!!.getString(ARGUMENTS_ITEM_TITLE)

@@ -3,6 +3,7 @@ package dev.olog.msc.presentation.dialog.create.playlist
 import android.content.Context
 import dev.olog.msc.R
 import dev.olog.msc.presentation.base.BaseEditTextDialog
+import dev.olog.msc.presentation.utils.lazyFast
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.k.extension.withArguments
 import io.reactivex.Completable
@@ -27,9 +28,16 @@ class NewPlaylistDialog : BaseEditTextDialog() {
     }
 
     @Inject lateinit var presenter: NewPlaylistDialogPresenter
-    @Inject @JvmField var listSize: Int = 0
-    @Inject lateinit var mediaId: MediaId
-    @Inject lateinit var title: String
+    private val listSize: Int by lazyFast {
+        arguments!!.getInt(NewPlaylistDialog.ARGUMENTS_LIST_SIZE)
+    }
+    private val mediaId: MediaId by lazyFast {
+        val mediaId = arguments!!.getString(NewPlaylistDialog.ARGUMENTS_MEDIA_ID)!!
+        MediaId.fromString(mediaId)
+    }
+    private val title: String by lazyFast {
+        arguments!!.getString(NewPlaylistDialog.ARGUMENTS_ITEM_TITLE)!!
+    }
 
     override fun title(): Int = R.string.popup_new_playlist
 
@@ -46,12 +54,12 @@ class NewPlaylistDialog : BaseEditTextDialog() {
     override fun errorMessageForInvalidForm(currentValue: String): Int = R.string.popup_playlist_name_already_exist
 
     override fun positiveAction(currentValue: String): Completable {
-        return presenter.execute(currentValue)
+        return presenter.execute(mediaId, currentValue)
     }
 
     override fun initialTextFieldValue(): String = ""
 
-    override fun isStringValid(string: String): Boolean = presenter.isStringValid(string)
+    override fun isStringValid(string: String): Boolean = presenter.isStringValid(mediaId, string)
 
     override fun successMessage(context: Context, currentValue: String): CharSequence {
         if (mediaId.isPlayingQueue){

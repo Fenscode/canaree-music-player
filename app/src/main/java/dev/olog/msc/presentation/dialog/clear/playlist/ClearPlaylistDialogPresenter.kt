@@ -6,12 +6,11 @@ import io.reactivex.Completable
 import javax.inject.Inject
 
 class ClearPlaylistDialogPresenter @Inject constructor(
-        private val mediaId: MediaId,
         private val useCase: ClearPlaylistUseCase
 
 ) {
 
-    fun execute(): Completable {
+    fun execute(mediaId: MediaId): Completable {
         return useCase.execute(mediaId)
     }
 

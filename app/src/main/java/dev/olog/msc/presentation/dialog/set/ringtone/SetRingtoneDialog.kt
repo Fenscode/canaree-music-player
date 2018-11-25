@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import dev.olog.msc.R
 import dev.olog.msc.constants.AppConstants
 import dev.olog.msc.presentation.base.BaseDialog
+import dev.olog.msc.presentation.utils.lazyFast
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.k.extension.asHtml
 import dev.olog.msc.utils.k.extension.withArguments
@@ -28,6 +29,10 @@ class SetRingtoneDialog : BaseDialog() {
         }
     }
 
+    private val mediaId: MediaId by lazyFast {
+        val mediaId = arguments!!.getString(SetRingtoneDialog.ARGUMENTS_MEDIA_ID)!!
+        MediaId.fromString(mediaId)
+    }
     @Inject lateinit var presenter: SetRingtoneDialogPresenter
 
     override fun title(context: Context): CharSequence {
@@ -56,7 +61,7 @@ class SetRingtoneDialog : BaseDialog() {
     }
 
     override fun positiveAction(dialogInterface: DialogInterface, which: Int): Completable {
-        return presenter.execute()
+        return presenter.execute(mediaId)
     }
 
     private fun createMessage() : String{

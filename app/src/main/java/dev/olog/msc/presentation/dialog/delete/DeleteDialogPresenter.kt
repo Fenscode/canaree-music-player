@@ -6,12 +6,11 @@ import io.reactivex.Completable
 import javax.inject.Inject
 
 class DeleteDialogPresenter @Inject constructor(
-        private val mediaId: MediaId,
         private val deleteUseCase: DeleteUseCase
 ) {
 
 
-    fun execute(): Completable {
+    fun execute(mediaId: MediaId): Completable {
         return deleteUseCase.execute(mediaId)
     }
 

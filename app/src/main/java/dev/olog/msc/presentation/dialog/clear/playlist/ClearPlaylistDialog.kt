@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import dev.olog.msc.R
 import dev.olog.msc.presentation.base.BaseDialog
+import dev.olog.msc.presentation.utils.lazyFast
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.k.extension.asHtml
 import dev.olog.msc.utils.k.extension.withArguments
@@ -26,7 +27,13 @@ class ClearPlaylistDialog : BaseDialog() {
         }
     }
 
-    @Inject lateinit var title: String
+    private val mediaId: MediaId by lazyFast {
+        val mediaId = arguments!!.getString(ClearPlaylistDialog.ARGUMENTS_MEDIA_ID)!!
+        MediaId.fromString(mediaId)
+    }
+    private val title: String by lazyFast {
+        arguments!!.getString(ClearPlaylistDialog.ARGUMENTS_ITEM_TITLE)
+    }
     @Inject lateinit var presenter: ClearPlaylistDialogPresenter
 
     override fun title(context: Context): CharSequence {
@@ -54,7 +61,7 @@ class ClearPlaylistDialog : BaseDialog() {
     }
 
     override fun positiveAction(dialogInterface: DialogInterface, which: Int): Completable {
-        return presenter.execute()
+        return presenter.execute(mediaId)
     }
 
     private fun createMessage() : String {

@@ -7,11 +7,10 @@ import io.reactivex.Completable
 import javax.inject.Inject
 
 class AddFavoriteDialogPresenter @Inject constructor(
-        private val mediaId: MediaId,
         private val addToFavoriteUseCase: AddToFavoriteUseCase
 ) {
 
-    fun execute(): Completable {
+    fun execute(mediaId: MediaId): Completable {
         val type = if (mediaId.isAnyPodcast) FavoriteType.PODCAST else FavoriteType.TRACK
         return addToFavoriteUseCase.execute(AddToFavoriteUseCase.Input(mediaId, type))
     }

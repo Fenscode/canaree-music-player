@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.support.v4.media.session.MediaControllerCompat
 import dev.olog.msc.R
 import dev.olog.msc.presentation.base.BaseDialog
+import dev.olog.msc.presentation.utils.lazyFast
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.k.extension.asHtml
 import dev.olog.msc.utils.k.extension.withArguments
@@ -29,9 +30,14 @@ class PlayLaterDialog : BaseDialog() {
         }
     }
 
-    @Inject lateinit var mediaId: MediaId
-    @Inject @JvmField var listSize: Int = 0
-    @Inject lateinit var title: String
+    private val mediaId: MediaId by lazyFast {
+        val mediaId = arguments!!.getString(PlayLaterDialog.ARGUMENTS_MEDIA_ID)!!
+        MediaId.fromString(mediaId)
+    }
+    private val listSize: Int by lazyFast {
+        arguments!!.getInt(PlayLaterDialog.ARGUMENTS_LIST_SIZE)
+    }
+    private val title: String by lazyFast { arguments!!.getString(PlayLaterDialog.ARGUMENTS_ITEM_TITLE) }
     @Inject lateinit var presenter: PlayLaterDialogPresenter
 
     override fun title(context: Context): CharSequence {
@@ -62,7 +68,7 @@ class PlayLaterDialog : BaseDialog() {
 
     override fun positiveAction(dialogInterface: DialogInterface, which: Int): Completable {
         val mediaController = MediaControllerCompat.getMediaController(activity!!)
-        return presenter.execute(mediaController)
+        return presenter.execute(mediaId, mediaController)
     }
 
     private fun createMessage() : String {

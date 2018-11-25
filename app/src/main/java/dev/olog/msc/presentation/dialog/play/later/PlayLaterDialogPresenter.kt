@@ -12,22 +12,21 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class PlayLaterDialogPresenter @Inject constructor(
-        private val mediaId: MediaId,
         private val getSongListByParamUseCase: GetSongListByParamUseCase
 ) {
 
-    fun execute(mediaController: MediaControllerCompat): Completable {
+    fun execute(mediaId: MediaId, mediaController: MediaControllerCompat): Completable {
         return if (mediaId.isLeaf){
             Single.fromCallable { "${mediaId.leaf!!}" }.subscribeOn(Schedulers.io())
         } else {
             getSongListByParamUseCase.execute(mediaId)
                     .firstOrError()
                     .map { songList -> songList.asSequence().map { it.id }.joinToString() }
-        }.map { mediaController.addQueueItem(newMediaDescriptionItem(it)) }
+        }.map { mediaController.addQueueItem(newMediaDescriptionItem(mediaId, it)) }
                 .ignoreElement()
     }
 
-    private fun newMediaDescriptionItem(songId: String): MediaDescriptionCompat {
+    private fun newMediaDescriptionItem(mediaId: MediaId, songId: String): MediaDescriptionCompat {
         return MediaDescriptionCompat.Builder()
                 .setMediaId(songId)
                 .setExtras(bundleOf(MusicConstants.IS_PODCAST to mediaId.isAnyPodcast))

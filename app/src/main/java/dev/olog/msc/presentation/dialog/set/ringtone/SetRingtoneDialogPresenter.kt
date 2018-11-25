@@ -21,23 +21,22 @@ import javax.inject.Inject
 
 class SetRingtoneDialogPresenter @Inject constructor(
         private val application: Application,
-        private val activity: AppCompatActivity,
-        private val mediaId: MediaId
+        private val activity: AppCompatActivity
 
 ) {
 
     @TargetApi(Build.VERSION_CODES.M)
-    fun execute() : Completable {
+    fun execute(mediaId: MediaId) : Completable {
         if (!isMarshmallow() || (isMarshmallow()) && Settings.System.canWrite(application)){
-            return setRingtone()
+            return setRingtone(mediaId)
         } else {
             requestWritingSettingsPermission()
             return Completable.never()
         }
     }
 
-    private fun setRingtone(): Completable{
-        return Completable.fromCallable(this::writeSettings)
+    private fun setRingtone(mediaId: MediaId): Completable{
+        return Completable.fromCallable { writeSettings(mediaId) }
                 .subscribeOn(Schedulers.io())
     }
 
@@ -47,14 +46,14 @@ class SetRingtoneDialogPresenter @Inject constructor(
                 .setTitle(R.string.popup_permission)
                 .setMessage(R.string.popup_request_permission_write_settings)
                 .setNegativeButton(R.string.popup_negative_cancel, null)
-                .setPositiveButton(R.string.popup_positive_ok, { _, _ ->
+                .setPositiveButton(R.string.popup_positive_ok) { _, _ ->
                     val packageName = application.packageName
                     val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:$packageName"))
                     activity.startActivity(intent)
-                }).show()
+                }.show()
     }
 
-    private fun writeSettings() : Boolean {
+    private fun writeSettings(mediaId: MediaId) : Boolean {
         val songId = mediaId.leaf!!
         val uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songId)
 
