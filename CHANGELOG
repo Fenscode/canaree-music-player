@@ -2,6 +2,7 @@
 - fixed crash detail fragment when updating
 - fixed search wrapper visual bug in detail fragment
 - added hide bottom navigation when aopening detail fragment
+- re-added disable night mode in activities
 
 2.0.12/2.0.13
 - removed disabling day night from base activity

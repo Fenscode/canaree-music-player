@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.StyleRes
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import dagger.android.support.DaggerAppCompatActivity
 import dev.olog.msc.R
@@ -14,6 +15,7 @@ abstract class BaseActivity : DaggerAppCompatActivity(), ThemedActivity {
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
+        disableDayNight()
         setTheme(getActivityTheme())
         themeAccentColor(this, theme)
         super.onCreate(savedInstanceState)
@@ -27,6 +29,12 @@ abstract class BaseActivity : DaggerAppCompatActivity(), ThemedActivity {
         AppTheme.isDarkMode() -> R.style.AppThemeDark
         AppTheme.isBlackMode() -> R.style.AppThemeBlack
         else -> throw IllegalStateException("invalid theme")
+    }
+
+    private fun disableDayNight(){
+        if (AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_NO){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 
     @Suppress("UNCHECKED_CAST")

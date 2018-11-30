@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.View
 import androidx.annotation.StyleRes
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import com.afollestad.materialdialogs.MaterialDialog
@@ -34,6 +35,7 @@ class PreferencesActivity : DaggerAppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         setTheme(getActivityTheme())
+        disableDayNight()
         themeAccentColor(this, theme)
         super.onCreate(savedInstanceState)
         window.setLightStatusBar()
@@ -61,6 +63,12 @@ class PreferencesActivity : DaggerAppCompatActivity(),
         AppTheme.isDarkMode() -> R.style.AppThemeDark
         AppTheme.isBlackMode() -> R.style.AppThemeBlack
         else -> throw IllegalStateException("invalid theme")
+    }
+
+    private fun disableDayNight(){
+        if (AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_NO){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 
     override fun invoke(dialog: MaterialDialog, color: Int) {
