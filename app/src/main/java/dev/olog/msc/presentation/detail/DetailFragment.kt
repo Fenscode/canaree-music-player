@@ -24,6 +24,7 @@ import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.k.extension.*
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_detail.view.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -132,6 +133,24 @@ class DetailFragment : BaseFragment() {
                     view.clear.toggleVisibility(!isEmpty, true)
                     viewModel.updateFilter(edit.text.toString())
                 }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        act.bottomWrapper.animate()
+                .alpha(0f)
+                .setDuration(100)
+                .withEndAction { act.bottomWrapper.setGone() }
+        act.findSlidingPanel()?.panelHeight = dimen(R.dimen.bottom_navigation_height)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        act.bottomWrapper.animate()
+                .alpha(1f)
+                .setDuration(100)
+                .withStartAction { act.bottomWrapper.setVisible() }
+                .withEndAction { act.findSlidingPanel()?.panelHeight = dimen(R.dimen.sliding_panel_peek) + dimen(R.dimen.bottom_navigation_height) }
     }
 
     override fun onResume() {
