@@ -68,7 +68,7 @@
         android:layout_height="@dimen/toolbar"
         android:clickable="true"
         android:focusable="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="@null"
         android:elevation="@dimen/toolbar_elevation" />
 
     <ImageButton
@@ -81,12 +81,12 @@
         android:layout_height="@dimen/toolbar"
         android:clickable="true"
         android:focusable="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="@null"
         android:elevation="@dimen/toolbar_elevation" />
 
     <TextView
         android:id="@+id/headerText"
-        tools:text="Selena Gomez"
+        tools:text="Animal Ambition: An Untamed Desire to Win"
         android:gravity="center"
         android:layout_width="0dp"
         android:layout_height="@dimen/toolbar"
@@ -98,7 +98,8 @@
         android:elevation="@dimen/toolbar_elevation"
         android:visibility="gone"
         tools:visibility="visible"
-        android:textAppearance="@style/Headline6.Alt" />
+        android:textAppearance="@style/Headline6.Alt"
+        android:maxLines="2"/>
 
     <ImageButton
         android:id="@+id/filter"
@@ -110,7 +111,7 @@
         android:layout_height="@dimen/toolbar"
         android:clickable="true"
         android:focusable="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="@null"
         android:elevation="@dimen/toolbar_elevation" />
 
     <FrameLayout
@@ -123,7 +124,7 @@
         android:layout_height="@dimen/toolbar"
         android:elevation="@dimen/toolbar_elevation"
         android:visibility="gone"
-        tools:visibility="visible">
+        tools:visibility="invisible">
 
         <View
             android:layout_width="match_parent"

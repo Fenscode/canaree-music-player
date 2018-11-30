@@ -1,5 +1,6 @@
 2.0.14
 - fixed crash detail fragment when updating
+- fixed search wrapper visual bug in detail fragment
 
 2.0.12
 - removed disabling day night from base activity

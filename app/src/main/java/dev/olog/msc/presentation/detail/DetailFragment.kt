@@ -143,6 +143,13 @@ class DetailFragment : BaseFragment() {
         more.setOnClickListener { navigator.toDialog(viewModel.mediaId, more) }
         filter.setOnClickListener {
             searchWrapper.toggleVisibility(!searchWrapper.isVisible, true)
+
+            if (isDetailItemImageExpanded() || ctx.isLandscape){
+                headerText.toggleVisibility(!searchWrapper.isVisible, true)
+            } else {
+                headerText.toggleVisibility(false, true)
+            }
+
         }
         clear.setOnClickListener { editText.setText("") }
     }
@@ -151,12 +158,22 @@ class DetailFragment : BaseFragment() {
         super.onPause()
         if (ctx.isPortrait){
             list.removeOnScrollListener(recyclerOnScrollListener)
-//            list.removeItemDecoration(detailListMargin)
         }
         back.setOnClickListener(null)
         more.setOnClickListener(null)
         filter.setOnClickListener(null)
         clear.setOnClickListener(null)
+    }
+
+    private fun isDetailItemImageExpanded(): Boolean {
+        val child = list.getChildAt(0)
+        val holder = list.getChildViewHolder(child)
+        if (holder.itemViewType == R.layout.item_detail_item_image){
+            val bottom = child.bottom - child.findViewById<View>(R.id.textWrapper).height
+            val toolbarHeight = statusBar.height + dimen(R.dimen.toolbar)
+            return bottom - toolbarHeight < 0
+        }
+        return true
     }
 
     internal fun adjustStatusBarColor(lightStatusBar: Boolean = hasLightStatusBarColor){

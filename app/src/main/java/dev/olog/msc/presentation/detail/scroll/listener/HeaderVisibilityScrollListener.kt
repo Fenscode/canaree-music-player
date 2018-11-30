@@ -1,6 +1,7 @@
 package dev.olog.msc.presentation.detail.scroll.listener
 
 import android.view.View
+import androidx.core.view.isVisible
 import dev.olog.msc.R
 import dev.olog.msc.presentation.detail.DetailFragment
 import dev.olog.msc.utils.k.extension.dimen
@@ -30,14 +31,14 @@ class HeaderVisibilityScrollListener(
 
             view.statusBar.toggleVisibility(needDarkLayout, false)
             view.toolbar.toggleVisibility(needDarkLayout, false)
-            view.headerText.toggleVisibility(needDarkLayout, false)
+            view.headerText.toggleVisibility(needDarkLayout && !view.searchWrapper.isVisible, false)
 
             fragment.hasLightStatusBarColor = needDarkLayout
 
         } else {
             view.statusBar.toggleVisibility(true, false)
             view.toolbar.toggleVisibility(true, false)
-            view.headerText.toggleVisibility(true, false)
+            view.headerText.toggleVisibility(!view.searchWrapper.isVisible, false)
 
             fragment.hasLightStatusBarColor = true
         }
