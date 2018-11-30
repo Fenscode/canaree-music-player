@@ -1,6 +1,7 @@
 package dev.olog.msc.presentation.detail
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dev.olog.msc.domain.entity.SortArranging
 import dev.olog.msc.domain.entity.SortType
@@ -10,7 +11,6 @@ import dev.olog.msc.presentation.detail.sort.DetailSort
 import dev.olog.msc.presentation.model.DisplayableItem
 import dev.olog.msc.utils.MediaId
 import dev.olog.msc.utils.MediaIdCategory
-import dev.olog.msc.utils.k.extension.asLiveData
 import dev.olog.msc.utils.k.extension.debounceFirst
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -55,31 +55,66 @@ class DetailFragmentViewModel @Inject constructor(
 
     private val filterPublisher = BehaviorSubject.createDefault("")
 
+    private val itemLiveData = MutableLiveData<List<DisplayableItem>>()
+    private val dataLiveData = MutableLiveData<MutableMap<DetailFragmentDataType, MutableList<DisplayableItem>>>()
+    private val mostPlayedLiveData = MutableLiveData<List<DisplayableItem>>()
+    private val relatedArtistsLiveData = MutableLiveData<List<DisplayableItem>>()
+    private val recentlyAddedLiveData = MutableLiveData<List<DisplayableItem>>()
+    private val albumsLiveData = MutableLiveData<List<DisplayableItem>>()
+
+    init {
+        item[currentCategory]!!
+                .debounceFirst()
+                .doOnError { it.printStackTrace() }
+                .onErrorReturnItem(listOf())
+                .subscribe(itemLiveData::postValue, Throwable::printStackTrace)
+                .addTo(subscriptions)
+
+        Observables.combineLatest(
+                item[currentCategory]!!.toObservable().debounceFirst().distinctUntilChanged(),
+                data[MOST_PLAYED]!!.debounceFirst().distinctUntilChanged(),
+                data[RECENTLY_ADDED]!!.debounceFirst().distinctUntilChanged(),
+                albums[currentCategory]!!.debounceFirst().distinctUntilChanged(),
+                data[RELATED_ARTISTS]!!.debounceFirst().distinctUntilChanged(),
+                filterSongs(data[SONGS]!!),
+                getVisibleTabsUseCase.execute()
+        ) { item, mostPlayed, recent, albums, artists, songs, visibility ->
+            presenter.createDataMap(item, mostPlayed, recent, albums, artists, songs, visibility)
+        }.doOnError { it.printStackTrace() }
+                .onErrorReturnItem(mutableMapOf())
+                .subscribe(dataLiveData::postValue, Throwable::printStackTrace)
+                .addTo(subscriptions)
+
+        data[MOST_PLAYED]!!
+                .debounceFirst()
+                .subscribe(mostPlayedLiveData::postValue, Throwable::printStackTrace)
+                .addTo(subscriptions)
+
+        data[RELATED_ARTISTS]!!
+                .debounceFirst()
+                .map { it.take(RELATED_ARTISTS_TO_SEE) }
+                .subscribe(relatedArtistsLiveData::postValue, Throwable::printStackTrace)
+                .addTo(subscriptions)
+
+        albums[currentCategory]!!
+                .debounceFirst()
+                .subscribe(albumsLiveData::postValue, Throwable::printStackTrace)
+                .addTo(subscriptions)
+
+        data[RECENTLY_ADDED]!!
+                .debounceFirst()
+                .map { it.take(VISIBLE_RECENTLY_ADDED_PAGES) }
+                .subscribe(recentlyAddedLiveData::postValue, Throwable::printStackTrace)
+                .addTo(subscriptions)
+    }
+
     fun updateFilter(filter: String){
         if (filter.isEmpty() || filter.length >= 2){
             filterPublisher.onNext(filter.toLowerCase())
         }
     }
 
-    val itemLiveData: LiveData<List<DisplayableItem>> = item[currentCategory]!!
-            .debounceFirst()
-            .doOnError { it.printStackTrace() }
-            .onErrorReturnItem(listOf())
-            .asLiveData()
-
-    private val dataMap : Observable<MutableMap<DetailFragmentDataType, MutableList<DisplayableItem>>> =
-            Observables.combineLatest(
-                    item[currentCategory]!!.toObservable().debounceFirst().distinctUntilChanged(),
-                    data[MOST_PLAYED]!!.debounceFirst().distinctUntilChanged(),
-                    data[RECENTLY_ADDED]!!.debounceFirst().distinctUntilChanged(),
-                    albums[currentCategory]!!.debounceFirst().distinctUntilChanged(),
-                    data[RELATED_ARTISTS]!!.debounceFirst().distinctUntilChanged(),
-                    filterSongs(data[SONGS]!!),
-                    getVisibleTabsUseCase.execute()
-            ) { item, mostPlayed, recent, albums, artists, songs, visibility ->
-                presenter.createDataMap(item, mostPlayed, recent, albums, artists, songs, visibility)
-            }.doOnError { it.printStackTrace() }
-                    .onErrorReturnItem(mutableMapOf())
+    fun getItemLiveData(): LiveData<List<DisplayableItem>> = itemLiveData
 
     private fun filterSongs(songObservable: Observable<List<DisplayableItem>>): Observable<List<DisplayableItem>>{
         return Observables.combineLatest(
@@ -100,26 +135,15 @@ class DetailFragmentViewModel @Inject constructor(
         subscriptions.clear()
     }
 
-    fun observeData(): LiveData<MutableMap<DetailFragmentDataType, MutableList<DisplayableItem>>> =
-            dataMap.asLiveData()
+    fun observeData(): LiveData<MutableMap<DetailFragmentDataType, MutableList<DisplayableItem>>> = dataLiveData
 
-    val mostPlayedLiveData: LiveData<List<DisplayableItem>> = data[MOST_PLAYED]!!
-            .debounceFirst()
-            .asLiveData()
+    fun getMostPlayedLiveData(): LiveData<List<DisplayableItem>> = mostPlayedLiveData
 
-    val relatedArtistsLiveData : LiveData<List<DisplayableItem>> = data[RELATED_ARTISTS]!!
-            .debounceFirst()
-            .map { it.take(RELATED_ARTISTS_TO_SEE) }
-            .asLiveData()
+    fun getRelatedArtistsLiveData() : LiveData<List<DisplayableItem>> = relatedArtistsLiveData
 
-    val albumsLiveData: LiveData<List<DisplayableItem>> = albums[currentCategory]!!
-            .debounceFirst()
-            .asLiveData()
+    fun getAlbumsLiveData(): LiveData<List<DisplayableItem>> = albumsLiveData
 
-    val recentlyAddedLiveData: LiveData<List<DisplayableItem>> = data[RECENTLY_ADDED]!!
-            .debounceFirst()
-            .map { it.take(VISIBLE_RECENTLY_ADDED_PAGES) }
-            .asLiveData()
+    fun getRecentlyAddedLiveData(): LiveData<List<DisplayableItem>> = recentlyAddedLiveData
 
     fun detailSortDataUseCase(mediaId: MediaId, action: (DetailSort) -> Unit){
         getDetailSortDataUseCase.execute(mediaId)

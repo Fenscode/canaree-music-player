@@ -88,19 +88,17 @@ class DetailFragment : BaseFragment() {
 
         view.cover?.setVisible()
 
-        viewModel.mostPlayedLiveData
+        viewModel.getMostPlayedLiveData()
                 .subscribe(viewLifecycleOwner, mostPlayedAdapter::updateDataSet)
 
-        viewModel.recentlyAddedLiveData
+        viewModel.getRecentlyAddedLiveData()
                 .subscribe(viewLifecycleOwner, recentlyAddedAdapter::updateDataSet)
 
-        viewModel.relatedArtistsLiveData
+        viewModel.getRelatedArtistsLiveData()
                 .subscribe(viewLifecycleOwner, relatedArtistAdapter::updateDataSet)
 
-        viewModel.albumsLiveData
-                .subscribe(viewLifecycleOwner) {
-                    albumsAdapter.updateDataSet(it)
-                }
+        viewModel.getAlbumsLiveData()
+                .subscribe(viewLifecycleOwner, albumsAdapter::updateDataSet)
 
         viewModel.observeData()
                 .subscribe(viewLifecycleOwner) { map ->
@@ -116,7 +114,7 @@ class DetailFragment : BaseFragment() {
                     }
                 }
 
-        viewModel.itemLiveData.subscribe(viewLifecycleOwner) { item ->
+        viewModel.getItemLiveData().subscribe(viewLifecycleOwner) { item ->
             if (item.isNotEmpty()){
                 headerText.text = item[0].title
                 val cover = view.findViewById<View>(R.id.cover)
